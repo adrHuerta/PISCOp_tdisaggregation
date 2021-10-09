@@ -1,4 +1,4 @@
-reticulate::use_virtualenv("/home/adrian/PycharmProjects/hourly_PISCOp/venv/", required = TRUE)
+reticulate::use_virtualenv("/home/waldo/PycharmProjects/forR/venv/", required = TRUE)
 reticulate::repl_python()
 
 import glob

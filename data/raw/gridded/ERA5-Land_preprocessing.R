@@ -1,4 +1,4 @@
-reticulate::use_virtualenv("/home/adrian/PycharmProjects/hourly_PISCOp/venv/", required = TRUE)
+reticulate::use_virtualenv("/home/waldo/PycharmProjects/forR/venv/", required = TRUE)
 reticulate::repl_python()
 
 import xarray as xr
@@ -12,12 +12,12 @@ shp_Peru = gpd_read_file('./data/others/Departamentos.shp')
 PISCOp_grid = xr.open_dataset("./data/others/PISCOp_grid_mask.nc").p
 PISCOp_grid.values[~np.isnan(PISCOp_grid.values)] = 1
 
-files_era5land = sorted(glob.glob("./data/raw/gridded/ERA5-Land/*.nc"))
+files_era5land = sorted(glob.glob("./data/raw/gridded/ERA5-Land/*.nc"))[1:]
 
 for i_year in files_era5land:
   
   i_year_nc = xr.open_dataset(i_year)
-  i_year_str = i_year.split("/")[7].split(".")[0]
+  i_year_str = i_year.split("/")[5].split(".")[0]
   
   new_i_year_nc = []
   for i_time in pd.to_datetime(i_year_nc.time.values):
@@ -65,3 +65,23 @@ for i_year in files_era5land:
   era5land_p["time"] = pd.to_datetime(era5land_p.time.values) - pd.Timedelta(hours=5)
   era5land_p["time"] = pd.to_datetime(era5land_p.time.values).shift(periods=-8, freq="H")  # 7pm-7am daily sum
   era5land_p.to_netcdf("./data/processed/gridded/ERA5-Land/" + i_year_str + "_era5land_p.nc", encoding=encoding, engine='netcdf4')
+
+#···················································#
+
+path_netcdf_in = "./data/processed/gridded/ERA5-Land/"
+path_netcdf_out = "./data/processed/gridded/ERA5-Land/"
+
+for year in range(2014,2021):
+  file_year = xr.open_dataset(path_netcdf_in + str(year) + "_era5land_p.nc")
+  file_year = file_year.sel(time = file_year.time.dt.year == year)
+  file_year_plus1 = xr.open_dataset(path_netcdf_in + str(year+1) + "_era5land_p.nc")
+  file_year_plus1 = file_year_plus1.sel(time = file_year_plus1.time.dt.year == year)
+  
+  encoding = {v: {'zlib': True, 'complevel': 5} for v in ["p"]}
+  file_merged = xr.concat([file_year, file_year_plus1], dim="time")
+  np.round(file_merged, 1).to_netcdf(path_netcdf_out + str(year) + "_era5land.nc", encoding=encoding, engine='netcdf4')
+
+  
+import os
+[os.remove(i) for i in sorted(glob.glob("./data/processed/gridded/ERA5-Land/*_p.nc"))]
+  
