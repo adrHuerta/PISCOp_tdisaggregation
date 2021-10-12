@@ -13,6 +13,8 @@ ema_data = pd.read_csv(archive.open('pc_qc_values.csv'), parse_dates=True, index
 
 ema_xyz = ema_xyz[~((ema_xyz["LON"] < -80) & (ema_xyz["LAT"] < -6))]
 ema_xyz.reset_index(drop=True, inplace=True)
+ema_xyz.iloc[168,2] = ema_xyz.iloc[168,2] + 0.05
+ema_xyz.iloc[168,3] = ema_xyz.iloc[168,3] + 0.05
 ema_data = ema_data.drop("X4720A6CC", axis=1)
 
 res = pd.concat([pd.Series(ema_data.columns.to_list()), ema_xyz["CODE"]], axis = 1)
