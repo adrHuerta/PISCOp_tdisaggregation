@@ -1,4 +1,4 @@
-reticulate::use_virtualenv("/home/adrian/PycharmProjects/hourly_PISCOp/venv/", required = TRUE)
+reticulate::use_virtualenv("/home/waldo/PycharmProjects/forR/venv/", required = TRUE)
 reticulate::repl_python()
 
 import numpy as np
@@ -31,5 +31,5 @@ def getting_hourly_files(step_time):
 
 
 Parallel(n_jobs=2, verbose=50)(
-  delayed(getting_hourly_files)(i) for i in PISCOpd.time.dt.strftime('%Y-%m-%d').values[0:10]
+  delayed(getting_hourly_files)(i) for i in PISCOpd.time.dt.strftime('%Y-%m-%d').values
 )
