@@ -10,7 +10,7 @@ PISCOp_grid <- raster::raster("./data/others/PISCOp_grid_mask.nc")
 output_file = "data/processed/gridded/AWSs"
 
 time_step_loop <- data.frame(time = time(aws_data$values),
-                             year_month = format(time(aws_data$values), "%Y-%m"))
+                             year_month = format(time(aws_data$values), "%Y"))
 
 # interpolation
 by(time_step_loop, time_step_loop$year_month, function(x){
