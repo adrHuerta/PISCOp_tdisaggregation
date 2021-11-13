@@ -29,10 +29,12 @@ for i_year in files_era5land:
       to_save = (to_compute - to_compute_previous)*1000
       to_save = to_save.assign_coords(time=i_time)
       to_save = to_save.reindex_like(PISCOp_grid, method="nearest").tp
-      to_save = to_save.where((to_save >= 0) | to_save.isnull(), 0)
+      to_save = to_save.where((to_save >= 0) | to_save.isnull())
       to_save = to_save.rio.write_crs(shp_Peru.crs)
       to_save = to_save.rio.write_nodata(np.nan)
       to_save = to_save.rio.interpolate_na(method = "nearest")
+      to_save = to_save.astype("float32")
+      to_save = np.round(to_save, 1)
       to_save = to_save.where(PISCOp_grid == True).drop(["z", "spatial_ref"]).to_dataset(name = "p")
       
     elif i_time.strftime('%H') == "01":
@@ -40,10 +42,12 @@ for i_year in files_era5land:
       to_save = to_compute*1000
       to_save = to_save.assign_coords(time=i_time)
       to_save = to_save.reindex_like(PISCOp_grid, method="nearest").tp
-      to_save = to_save.where((to_save >= 0) | to_save.isnull(), 0)
+      to_save = to_save.where((to_save >= 0) | to_save.isnull())
       to_save = to_save.rio.write_crs(shp_Peru.crs)
       to_save = to_save.rio.write_nodata(np.nan)
       to_save = to_save.rio.interpolate_na(method = "nearest")
+      to_save = to_save.astype("float32")
+      to_save = np.round(to_save, 1)
       to_save = to_save.where(PISCOp_grid == True).drop(["z", "spatial_ref"]).to_dataset(name = "p")
       
     else:
@@ -51,10 +55,12 @@ for i_year in files_era5land:
       to_save = (to_compute - to_compute_previous)*1000
       to_save = to_save.assign_coords(time=i_time)
       to_save = to_save.reindex_like(PISCOp_grid, method="nearest").tp
-      to_save = to_save.where((to_save >= 0) | to_save.isnull(), 0)
+      to_save = to_save.where((to_save >= 0) | to_save.isnull())
       to_save = to_save.rio.write_crs(shp_Peru.crs)
       to_save = to_save.rio.write_nodata(np.nan)
       to_save = to_save.rio.interpolate_na(method = "nearest")
+      to_save = to_save.astype("float32")
+      to_save = np.round(to_save, 1)
       to_save = to_save.where(PISCOp_grid == True).drop(["z", "spatial_ref"]).to_dataset(name = "p")
     
     #print(i_time)

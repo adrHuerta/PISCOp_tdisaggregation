@@ -43,5 +43,7 @@ vignettes/*.pdf
 /data/processed
 /data/raw/gridded/ERA5-Land
 /data/raw/gridded/IMERG-Early
+/data/raw/gridded/PERSIANN-CSS
+/data/raw/gridded/GSMaP_op
 /data/raw/gridded/PISCOp
 /data/raw/obs/AWS

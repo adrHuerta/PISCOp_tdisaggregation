@@ -24,8 +24,13 @@ for i_year in files_early:
     to_compute = i_year_nc.isel(z=i_time)
     to_save = to_compute.assign_coords(time=i_time_range[i_time])
     to_save = to_save.reindex_like(PISCOp_grid, method="nearest").variable
-    to_save = to_save.where((to_save >= 0) | to_save.isnull(), 0)
+    to_save = to_save.where((to_save >= 0) | to_save.isnull())
+    to_save = to_save.rio.write_nodata(np.nan)
+    to_save = to_save.rio.write_crs("EPSG:3857")
+    to_save = to_save.rio.interpolate_na(method="nearest")
     to_save = to_save.where(PISCOp_grid == True)
+    to_save = to_save.astype("float32")
+    to_save = np.round(to_save, 1)
     to_save = (to_save + 0).to_dataset(name = "p")
     new_i_year_nc.append(to_save)
   

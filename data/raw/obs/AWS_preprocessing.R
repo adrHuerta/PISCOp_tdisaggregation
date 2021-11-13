@@ -42,5 +42,5 @@ ema_data_shifted = pd.concat(ema_data_shifted, axis=1)
 
 
 #np.round(ema_data_shifted_rr, 2).to_csv("/content/drive/MyDrive/Google_Colab_temp/ema_data_rr_77.csv")
-np.round(ema_data_shifted, 1).to_csv("./data/processed/obs/AWS/AWS_data.csv")
-ema_xyz.to_csv("./data/processed/obs/AWS/AWS_xyz.csv")
+np.round(ema_data_shifted, 1).to_csv("./data/raw/obs/AWS/AWS_data.csv")
+ema_xyz.to_csv("./data/raw/obs/AWS/AWS_xyz.csv")
