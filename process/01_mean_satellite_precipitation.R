@@ -32,24 +32,23 @@ for(year in 1:length(imerg_early_files)){
   grid_x <- imerg_early_files[[year]]
   grid_y <- persiann_css_files[[year]]
   grid_z <- gsmap_op_files[[year]]
+  ts_range <- grid_x@z[[1]]
   
-  raster::brick(
-    parallel::mclapply(1:raster::nlayers(grid_x), function(time_step){
+  parallel::mclapply(1:length(grid_x@z[[1]]), function(time_step){
     
     grid_res <- (grid_x[[time_step]] + grid_y[[time_step]] + grid_z[[time_step]])/3
-    round(grid_res, 1)
+    grid_res <- round(grid_res, 1)
     
+    raster::writeRaster(x = grid_res,
+                        varname = "p",
+                        filename = file.path(output_file,
+                                             sprintf("%s_%s.nc", "mean_SAT",  grid_x@z[[1]][time_step])),
+                        datatype = 'FLT4S', force_v4 = TRUE, compression = 7)
   }, mc.cores = 10)
-  ) -> raster_brick_aws
   
-  raster_brick_aws <- raster::setZ(raster_brick_aws, grid_x@z[[1]], "Date/time")
+  }
+
   
-  raster::writeRaster(x = raster_brick_aws,
-                      varname = "p",
-                      filename = file.path(output_file,
-                                           sprintf("%s_%s.nc", "mean_SAT",  substr(grid_x[[1]]@z[[1]], 1, 4))),
-                      datatype = 'FLT4S', force_v4 = TRUE, compression = 7)
-}
 
 
 
