@@ -44,10 +44,13 @@ lapply(1:length(dailyVar), function(i){
       
     }
     
-    
-    i_mean_sat_to_save[n_pixel] <- as.numeric(round(mean_sat_c, 1))
-    
-  }, mc.cores = 12)
+    as.numeric(round(mean_sat_c, 1))
+  }, mc.cores = 12) -> to_set_values
+  
+  
+  for(xxi in 1:raster::nlayers(i_mean_sat_to_save)){
+    raster::values(i_mean_sat_to_save[[xxi]]) <- sapply(to_set_values, function(x) x[xxi])  
+  }
   
 
   lapply(1:raster::nlayers(i_mean_sat_to_save), function(zi){
