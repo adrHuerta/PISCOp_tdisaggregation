@@ -1,8 +1,7 @@
-reticulate::use_virtualenv("/home/adrian/Documents/Repos/wa_eps_budyko/venv/", required = TRUE)
+reticulate::use_virtualenv("/home/waldo/PycharmProjects/forR/venv/", required = TRUE)
 reticulate::repl_python()
 
-import numpy as np
-import pandas as pd
+import numpy as npaimport pandas as pd
 import xarray as xr
 import glob
 from joblib import Parallel, delayed
