@@ -18,7 +18,7 @@ dailyVar <- mapply(function(x, y){
 #
 output_file = "data/processed/gridded/mean_SATc"
 
-lapply(98:length(dailyVar), function(i){
+lapply(1444:length(dailyVar), function(i){
   
   time_values <- dailyVar[[i]]
   
