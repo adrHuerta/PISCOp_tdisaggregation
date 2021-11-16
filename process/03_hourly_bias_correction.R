@@ -21,7 +21,7 @@ dailyVar <- dailyVar[-c(1393:1416)]
 #
 output_file = "data/processed/gridded/mean_SATc"
 
-lapply(1444:length(dailyVar), function(i){
+lapply(1393:1395, function(i){
   
   time_values <- dailyVar[[i]]
   
@@ -63,7 +63,8 @@ lapply(1444:length(dailyVar), function(i){
                         varname = "p",
                         filename = file.path(output_file,
                                              sprintf("%s.nc", names(i_mean_sat_to_save[[zi]]))),
-                        datatype = 'FLT4S', force_v4 = TRUE, compression = 7)
+                        datatype = 'FLT4S', force_v4 = TRUE, compression = 7,
+                        overwrite = TRUE)
     })
 
 
@@ -120,7 +121,8 @@ lapply(1:length(dailyVar_02_28), function(i){
                         varname = "p",
                         filename = file.path(output_file,
                                              sprintf("%s.nc", names(i_mean_sat_to_save[[zi]]))),
-                        datatype = 'FLT4S', force_v4 = TRUE, compression = 7)
+                        datatype = 'FLT4S', force_v4 = TRUE, compression = 7,
+                        overwrite = TRUE)
   })
   
   
