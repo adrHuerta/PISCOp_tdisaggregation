@@ -47,4 +47,4 @@ vignettes/*.pdf
 /data/raw/gridded/GSMaP_op
 /data/raw/gridded/PISCOp
 /data/raw/obs/AWS
-/paper
+/paper/output
