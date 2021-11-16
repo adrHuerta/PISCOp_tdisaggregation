@@ -18,7 +18,7 @@ dailyVar <- mapply(function(x, y){
 #
 output_file = "data/processed/gridded/mean_SATc"
 
-lapply(1:length(dailyVar), function(i){
+lapply(98:length(dailyVar), function(i){
   
   time_values <- dailyVar[[i]]
   
@@ -31,20 +31,22 @@ lapply(1:length(dailyVar), function(i){
   i_mean_sat_to_save = i_mean_sat[[19:24]]
   
   parallel::mclapply(1:raster::ncell(i_aws), function(n_pixel){
-    
+  #for(i in 1:raster::ncell(i_aws)){  
     if(all(is.na(i_mean_sat[n_pixel]))){
       
       mean_sat_c <- i_mean_sat_to_save[n_pixel]
       
     } else {
       
-      MBC::QDM(o.c = i_aws[n_pixel],
-               m.c = i_mean_sat[n_pixel],
-               m.p = i_mean_sat_to_save[n_pixel], ratio = TRUE, trace = 0.1)$mhat.p -> mean_sat_c
-      
+      tryCatch(
+        MBC::QDM(o.c = i_aws[n_pixel],
+                 m.c = i_mean_sat[n_pixel],
+                 m.p = i_mean_sat_to_save[n_pixel], ratio = TRUE, trace = 0.1)$mhat.p,
+        error = function(x) i_mean_sat_to_save[n_pixel]) -> mean_sat_c      
     }
     
     as.numeric(round(mean_sat_c, 1))
+    #}
   }, mc.cores = 12) -> to_set_values
   
   
