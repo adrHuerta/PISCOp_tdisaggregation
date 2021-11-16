@@ -1,7 +1,8 @@
 reticulate::use_virtualenv("/home/waldo/PycharmProjects/forR/venv/", required = TRUE)
 reticulate::repl_python()
 
-import numpy as npaimport pandas as pd
+import numpy as np
+import pandas as pd
 import xarray as xr
 import glob
 from joblib import Parallel, delayed
@@ -28,7 +29,7 @@ def getting_hourly_files(step_time):
   PISCOpd_hourly_files = [PISCOpd_daily_file * (xr.apply_ufunc(wetOdray, daily_file, PISCOpd_daily_file, grid, vectorize=True)) for grid in hourly_files]
   PISCOpd_hourly_files = np.round(xr.concat(PISCOpd_hourly_files, dim="time").drop("crs"), 1)
   PISCOpd_hourly_files["time"] = hourly_files_dates
-  PISCOpd_hourly_files.to_netcdf("data/processed/gridded/PISCOp_hourly/PISCOp_hourly_" + step_time + ".nc", encoding=encoding, engine='netcdf4')
+  PISCOpd_hourly_files.to_netcdf("data/processed/gridded/PISCOp_hourly/PISCOp_hourly_" + step_time.replace(".","-") + ".nc", encoding=encoding, engine='netcdf4')
   
   # from mean_SAT
   hourly_files_1 = sorted(glob.glob("data/processed/gridded/mean_SAT/mean_SAT_" + step_time.replace(".","-") + "*.nc"))
@@ -42,7 +43,7 @@ def getting_hourly_files(step_time):
   PISCOpd_hourly_files_1 = [PISCOpd_daily_file_1 * (xr.apply_ufunc(wetOdray, daily_file_1, PISCOpd_daily_file, grid, vectorize=True)) for grid in hourly_files_1]
   PISCOpd_hourly_files_1 = np.round(xr.concat(PISCOpd_hourly_files_1, dim="time").drop("crs"), 1)
   PISCOpd_hourly_files_1["time"] = hourly_files_dates_1
-  PISCOpd_hourly_files_1.to_netcdf("data/processed/gridded/PISCOp_hourly_mean_SAT/PISCOp_hourly_mean_SAT_" + step_time + ".nc", encoding=encoding, engine='netcdf4')  
+  PISCOpd_hourly_files_1.to_netcdf("data/processed/gridded/PISCOp_hourly_mean_SAT/PISCOp_hourly_mean_SAT_" + step_time.replace(".","-") + ".nc", encoding=encoding, engine='netcdf4')  
 
 
 Parallel(n_jobs=1, verbose=50)(
