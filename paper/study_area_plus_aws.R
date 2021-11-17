@@ -41,17 +41,23 @@ p3 <- ggplot() +
                                                                          angle = 90,
                                                                          vjust = 0.5))) +
   # scale_fill_manual(values = ochre_palettes$williams_pilbara) + 
-  geom_polygon(data = shp_peru,
-               aes(x = long, y = lat, group = group),
-               fill = NA, colour = "gray40", size = 0.5) + 
+  # geom_polygon(data = shp_peru,
+  #              aes(x = long, y = lat, group = group),
+  #              fill = NA, colour = "gray40", size = 0.5) + 
   geom_polygon(data = shp_sa,
                aes(x = long, y = lat, group = group),
                fill = NA, colour = "gray40", size = 0.8) +
-  geom_polygon(data = shp_lakes, # water bodies > 10 km^2
-               aes(x = long, y = lat, group = group),
-               fill = "lightblue", colour = "lightblue", size = 0.3) +
+  # geom_polygon(data = shp_lakes, # water bodies > 10 km^2
+  #              aes(x = long, y = lat, group = group),
+  #              fill = "lightblue", colour = "lightblue", size = 0.3) +
   geom_point(data = as.data.frame(aws$xyz),
              aes(x = LON, y = LAT), colour = "black", shape = 1, size = 2, stroke = .7) + #f3
+  geom_point(data = as.data.frame(aws$xyz[aws$xyz@data$LEN_x > 0,]),
+             aes(x = LON, y = LAT), colour = "red", shape = 19, size = 3, stroke = .7) + #f3
+  geom_label_repel(data = as.data.frame(aws$xyz[aws$xyz@data$LEN_x > 0,]), 
+                   aes(x = LON, y = LAT, label = ESTACION),
+                   fill = "white", size = 1.75,
+                   box.padding = 1, alpha = .8) +
   # scale_size_manual("Filtro 3", values = c(3, 1.5)) +
   # scale_colour_manual("Filtro 2", values = c("blue", "red")) +
   # scale_shape_manual("Filtro 1:", values = c(22, 21)) + 
