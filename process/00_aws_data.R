@@ -10,13 +10,18 @@ length_of_data <- apply(aws_data, 2, function(x){sum(!is.na(x))*100/length(x)})
 length_of_data <- length_of_data[length_of_data > 5]
 aws_data <- aws_data[, names(length_of_data)]
 
+
+
 aws_xyz <- read.csv("data/raw/obs/AWS/AWS_xyz.csv", stringsAsFactors = FALSE)
 aws_xyz <- aws_xyz[match(names(length_of_data), aws_xyz$CODE), ]
+aws_xyz$LEN <- length_of_data
+aws_xyz$LEN_x <- 0
+aws_xyz[match(c(names(length_of_data[length_of_data >= 90]), "X4727547C", "X47E2D1CC"), aws_xyz$CODE),]$LEN_x <- 1
 row.names(aws_xyz) <- NULL
 
 # spatial xyz data
 sp_xyz <- sp::SpatialPointsDataFrame(coords = aws_xyz[, c("LON", "LAT")],
-                                     data = aws_xyz[, c("CODE", "ESTACION")],
+                                     data = aws_xyz[, c("CODE", "ESTACION", "LEN", "LEN_x")],
                                      proj4string = sp::CRS("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"))
 
 # save
