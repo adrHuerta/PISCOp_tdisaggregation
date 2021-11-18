@@ -110,13 +110,6 @@ ggsave(file.path(".", "paper", "output", "Fig_mean_intensity.jpg"),
        dpi = 300, scale = 1,
        width = 10, height = 7, units = "in")
 
-to_plot_df <- rbind(PISCOp_hourly, PISCOp_hourly_mean_SAT, AWSs_gridded)
-to_plot_df$data <- factor(to_plot_df$data, levels = c("PISCOp_hourly", "PISCOp_hourly_noBC", "AWSs"))
-to_plot_df$season <- factor(to_plot_df$season, levels = c("12_01_02", "06_07_08"))
-to_plot_df$value <- factor(to_plot_df$value, levels = c("01", "5"), labels = c("0.1 mm/h", "5 mm/h"))
-
-
-
 
 # mean frequency 
 
@@ -160,11 +153,16 @@ AWSs_gridded <- list.files(path = "./paper/output", pattern = "AWSs_hourly_frequ
     res
   }) %>% do.call("rbind", .)
 
+to_plot_df <- rbind(PISCOp_hourly, PISCOp_hourly_mean_SAT, AWSs_gridded)
+to_plot_df$data <- factor(to_plot_df$data, levels = c("PISCOp_hourly", "PISCOp_hourly_noBC", "AWSs"))
+to_plot_df$season <- factor(to_plot_df$season, levels = c("12_01_02", "06_07_08"))
+to_plot_df$value <- factor(to_plot_df$value, levels = c("01", "5"), labels = c("0.1 mm/h", "5 mm/h"))
+
 
 ggplot() + 
-  geom_raster(data = subset(subset(subset(to_plot_df, var == "Frequency"), data == "PISCOp_hourly"), value == "01"), aes(x = x, y = y, fill = p)) + 
-  geom_raster(data = subset(subset(subset(to_plot_df, var == "Frequency"), data == "PISCOp_hourly_noBC"), value == "01"), aes(x = x, y = y, fill = p)) + 
-  geom_point(data = subset(subset(subset(to_plot_df, var == "Frequency"), data == "AWSs"), value == "01"), aes(x = x, y = y, fill = p, colour = p), shape = 21, size = 2, show.legend = FALSE) + 
+  geom_raster(data = subset(subset(subset(to_plot_df, var == "Frequency"), data == "PISCOp_hourly"), value == "0.1 mm/h"), aes(x = x, y = y, fill = p)) + 
+  geom_raster(data = subset(subset(subset(to_plot_df, var == "Frequency"), data == "PISCOp_hourly_noBC"), value == "0.1 mm/h"), aes(x = x, y = y, fill = p)) + 
+  geom_point(data = subset(subset(subset(to_plot_df, var == "Frequency"), data == "AWSs"), value == "0.1 mm/h"), aes(x = x, y = y, fill = p, colour = p), shape = 21, size = 2, show.legend = FALSE) + 
   scale_colour_gradientn(colors = colorRampPalette(ochRe::ochre_palettes$healthy_reef)(500), limits = c(0, 50)) + 
   scale_fill_gradientn(colors =  colorRampPalette(ochRe::ochre_palettes$healthy_reef)(500),
                        "Mean frequencies of wet hours (>= 0.1 mm/h, %)",
@@ -192,9 +190,9 @@ ggplot() +
 
 
 ggplot() + 
-  geom_raster(data = subset(subset(subset(to_plot_df, var == "Frequency"), data == "PISCOp_hourly"), value == "5"), aes(x = x, y = y, fill = p)) + 
-  geom_raster(data = subset(subset(subset(to_plot_df, var == "Frequency"), data == "PISCOp_hourly_noBC"), value == "5"), aes(x = x, y = y, fill = p)) + 
-  geom_point(data = subset(subset(subset(to_plot_df, var == "Frequency"), data == "AWSs"), value == "5"), aes(x = x, y = y, fill = p, colour = p), shape = 21, size = 2, show.legend = FALSE) + 
+  geom_raster(data = subset(subset(subset(to_plot_df, var == "Frequency"), data == "PISCOp_hourly"), value == "5 mm/h"), aes(x = x, y = y, fill = p)) + 
+  geom_raster(data = subset(subset(subset(to_plot_df, var == "Frequency"), data == "PISCOp_hourly_noBC"), value == "5 mm/h"), aes(x = x, y = y, fill = p)) + 
+  geom_point(data = subset(subset(subset(to_plot_df, var == "Frequency"), data == "AWSs"), value == "5 mm/h"), aes(x = x, y = y, fill = p, colour = p), shape = 21, size = 2, show.legend = FALSE) + 
   scale_colour_gradientn(colors = colorRampPalette(ochRe::ochre_palettes$healthy_reef)(500), limits = c(0, 5)) + 
   scale_fill_gradientn(colors =  colorRampPalette(ochRe::ochre_palettes$healthy_reef)(500),
                        "Mean frequencies of wet hours (>= 5 mm/h, %)",
