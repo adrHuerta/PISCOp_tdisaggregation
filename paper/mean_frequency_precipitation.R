@@ -9,14 +9,22 @@ from cdo import Cdo
 cdo = Cdo()
 
 def freq_of_wet_days_01(x):
-  res = x[x >= 0.1]
-  res = len(res) * 100 / len(x)
+  if all(np.isnan(x)):
+    res = np.nan
+  else:
+    res = x[x >= 0.1]
+    res = len(res) * 100 / len(x)
   return res
 
+
 def freq_of_wet_days_5(x):
-  res = x[x >= 5]
-  res = len(res) * 100 / len(x)
+  if all(np.isnan(x)):
+    res = np.nan
+  else:
+    res = x[x >= 5]
+    res = len(res) * 100 / len(x)
   return res
+
 
 seasons = [["12", "01", "02"], ["06", "07", "08"]]
 for season in range(len(seasons)):
