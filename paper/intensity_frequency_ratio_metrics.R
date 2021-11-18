@@ -35,29 +35,40 @@ piscop_hourly_noBC_ts_vi <- dir("data/processed/gridded/PISCOp_hourly_mean_SAT",
 seasons <- list(c("12","01","02"), c("05", "06", "07"))
 lapply(seasons, function(z){
   
-  aws_ts_vi[format(time(aws_ts_vi), "%m") %in% z] %>%
-    apply(2, function(x){
+  sapply(names(aws_ts_vi), function(station){
+    
+    aws_ts_i <- aws_ts_vi[format(time(aws_ts_vi), "%m") %in% z][, station]
+    piscop_hourly_i <- piscop_hourly_ts_vi[format(time(piscop_hourly_ts_vi), "%m") %in% z][, station]
+    cbind(aws_ts_i, piscop_hourly_i) %>% zoo::coredata() %>% .[complete.cases(.), ] -> r_i
+    r_i %>% apply(2, function(x){
       res = x[x >= 0.1]
       res = length(res)/length(x)
       res
-    }) -> df1
+    }) -> F_i
+    
+    Fr <- F_i[2]/F_i[1]
+    Fr
+    
+  }) -> Fr_1
   
-  piscop_hourly_ts_vi[format(time(piscop_hourly_ts_vi), "%m") %in% z] %>%
-    apply(2, function(x){
+  sapply(names(aws_ts_vi), function(station){
+    
+    aws_ts_i <- aws_ts_vi[format(time(aws_ts_vi), "%m") %in% z][, station]
+    piscop_hourly_noBC_i <- piscop_hourly_noBC_ts_vi[format(time(piscop_hourly_noBC_ts_vi), "%m") %in% z][, station]
+    cbind(aws_ts_i, piscop_hourly_noBC_i) %>% zoo::coredata() %>% .[complete.cases(.), ] -> r_i
+    r_i %>% apply(2, function(x){
       res = x[x >= 0.1]
       res = length(res)/length(x)
       res
-    }) -> df2
+    }) -> F_i
+    
+    Fr <- F_i[2]/F_i[1]
+    Fr
+    
+  }) -> Fr_2
   
-  piscop_hourly_noBC_ts_vi[format(time(piscop_hourly_noBC_ts_vi), "%m") %in% z] %>%
-    apply(2, function(x){
-      res = x[x >= 0.1]
-      res = length(res)/length(x)
-      res
-    }) -> df3
-  
-  rbind(data.frame(value = df2/df1, as.data.frame(aws_sp_vi)[, c("LAT", "LON")], CODE = names(df2), data = rep("PISCOp_hourly/AWS", length(df2)), season = rep(paste(z, collapse = "_"), length(df2))),
-        data.frame(value = df3/df1, as.data.frame(aws_sp_vi)[, c("LAT", "LON")], CODE = names(df3), data = rep("PISCOp_hourly_noBC/AWS", length(df3)), season = rep(paste(z, collapse = "_"), length(df3)))
+  rbind(data.frame(value = Fr_1, as.data.frame(aws_sp_vi)[, c("LAT", "LON")], data = rep("PISCOp_hourly/AWS", length(Fr_1)), season = rep(paste(z, collapse = "_"), length(Fr_1))),
+        data.frame(value = Fr_2, as.data.frame(aws_sp_vi)[, c("LAT", "LON")], data = rep("PISCOp_hourly_noBC/AWS", length(Fr_2)), season = rep(paste(z, collapse = "_"), length(Fr_2)))
         )
   
   }) %>% do.call(rbind, .) -> to_plot
@@ -92,32 +103,40 @@ ggsave(file.path(".", "paper", "output", "Fig_frequency_ratio.jpg"),
 
 lapply(seasons, function(z){
   
-  aws_ts_vi[format(time(aws_ts_vi), "%m") %in% z] %>%
-    apply(2, function(x){
+  sapply(names(aws_ts_vi), function(station){
+    
+    aws_ts_i <- aws_ts_vi[format(time(aws_ts_vi), "%m") %in% z][, station]
+    piscop_hourly_i <- piscop_hourly_ts_vi[format(time(piscop_hourly_ts_vi), "%m") %in% z][, station]
+    cbind(aws_ts_i, piscop_hourly_i) %>% zoo::coredata() %>% .[complete.cases(.), ] -> r_i
+    r_i %>% apply(2, function(x){
       res = x[x >= 0.1]
       mean(res, na.rm = TRUE)
-    }) -> Is_1
-  
-  Ms_1 <- apply(aws_ts_vi[format(time(aws_ts_vi), "%m") %in% z], 2, mean, na.rm = TRUE)
-  
-  piscop_hourly_ts_vi[format(time(piscop_hourly_ts_vi), "%m") %in% z] %>%
-    apply(2, function(x){
+    }) -> I_i
+    r_i %>% apply(2, mean) -> M_i
+    
+    I2M <- (I_i[2]/I_i[1])/(M_i[2]/M_i[1])
+    I2M
+    
+  }) -> I2M_1
+
+  sapply(names(aws_ts_vi), function(station){
+    
+    aws_ts_i <- aws_ts_vi[format(time(aws_ts_vi), "%m") %in% z][, station]
+    piscop_hourly_noBC_i <- piscop_hourly_noBC_ts_vi[format(time(piscop_hourly_noBC_ts_vi), "%m") %in% z][, station]
+    cbind(aws_ts_i, piscop_hourly_noBC_i) %>% zoo::coredata() %>% .[complete.cases(.), ] -> r_i
+    r_i %>% apply(2, function(x){
       res = x[x >= 0.1]
       mean(res, na.rm = TRUE)
-    }) -> Id_2
+    }) -> I_i
+    r_i %>% apply(2, mean) -> M_i
+    
+    I2M <- (I_i[2]/I_i[1])/(M_i[2]/M_i[1])
+    I2M
+    
+  }) -> I2M_2
   
-  Md_2 <- apply(piscop_hourly_ts_vi[format(time(piscop_hourly_ts_vi), "%m") %in% z], 2, mean, na.rm = TRUE)
-  
-  piscop_hourly_noBC_ts_vi[format(time(piscop_hourly_noBC_ts_vi), "%m") %in% z] %>%
-    apply(2, function(x){
-      res = x[x >= 0.1]
-      mean(res, na.rm = TRUE)
-    }) -> Id_3
-  
-  Md_3 <- apply(piscop_hourly_noBC_ts_vi[format(time(piscop_hourly_noBC_ts_vi), "%m") %in% z], 2, mean, na.rm = TRUE)
-  
-  rbind(data.frame(value = (Id_2/Is_1)/(Md_2/Ms_1), as.data.frame(aws_sp_vi)[, c("LAT", "LON")], CODE = names(Id_2), data = rep("PISCOp_hourly/AWS", length(Id_2)), season = rep(paste(z, collapse = "_"), length(Id_2))),
-        data.frame(value = (Id_3/Is_1)/(Md_3/Ms_1), as.data.frame(aws_sp_vi)[, c("LAT", "LON")], CODE = names(Id_3), data = rep("PISCOp_hourly_noBC/AWS", length(Id_3)), season = rep(paste(z, collapse = "_"), length(Id_3)))
+  rbind(data.frame(value = I2M_1, as.data.frame(aws_sp_vi)[, c("LAT", "LON")], data = rep("PISCOp_hourly/AWS", length(I2M_1)), season = rep(paste(z, collapse = "_"), length(I2M_1))),
+        data.frame(value = I2M_2, as.data.frame(aws_sp_vi)[, c("LAT", "LON")], data = rep("PISCOp_hourly_noBC/AWS", length(I2M_2)), season = rep(paste(z, collapse = "_"), length(I2M_2)))
   )
   
 }) %>% do.call(rbind, .) -> to_plot
