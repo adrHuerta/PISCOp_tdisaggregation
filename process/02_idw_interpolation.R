@@ -1,6 +1,8 @@
 rm(list = ls())
 "%>%" = magrittr::`%>%`
 
+source('./src/oidw.R')
+
 # observed data
 aws_data <- readRDS("./data/processed/obs/AWS/AWSs.RDS")
 
@@ -16,8 +18,8 @@ parallel::mclapply(1:nrow(aws_data$values), function(time_step){
     xyz_i@data$value <- as.numeric(aws_data$values[time_step, ])
     xyz_i <- xyz_i[complete.cases(xyz_i@data), ]
 
-    gs <- gstat::gstat(formula = value ~ 1, locations = xyz_i, set = list(idp = 2))
-    idw <- round(raster::interpolate(PISCOp_grid, gs), 1)
+    
+    idw <- O_IDW(formula_i = value ~ 1, location_i = xyz_i, grid_i = PISCOp_grid)
     name_to_save <- format(time(aws_data$values[time_step, ]), "%Y-%m-%d %H:%M:%S")
     
     raster::writeRaster(x = idw,
