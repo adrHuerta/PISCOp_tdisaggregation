@@ -14,7 +14,7 @@ O_IDW <- function(formula_i,
   poss <- which(mse %in% min(mse))
   bestparam <- idpRange[poss]
   
-  gs <- gstat::gstat(formula = value ~ 1, locations = xyz_i, set = list(idp = bestparam))
+  gs <- gstat::gstat(formula = formula_i, locations = location_i, set = list(idp = bestparam))
   idw <- round(raster::interpolate(grid_i, gs), 1)
   idw
   
