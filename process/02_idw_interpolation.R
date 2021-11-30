@@ -28,7 +28,7 @@ parallel::mclapply(1:nrow(aws_data$values), function(time_step){
                                              sprintf("%s_%s.nc", "AWSs",  name_to_save)),
                         datatype = 'FLT4S', force_v4 = TRUE, compression = 7)
   
-  }, mc.cores = 10)
+  }, mc.cores = 12)
 
 ####
 
