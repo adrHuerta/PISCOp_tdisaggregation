@@ -2,6 +2,7 @@ reticulate::use_virtualenv("/home/waldo/PycharmProjects/forR/venv/", required=TR
 reticulate::repl_python()
 
 import xarray as xr
+import datetime
 import numpy as np
 import glob
 import pandas as pd
@@ -61,9 +62,10 @@ for year in range(2014,2021):
   file_year_plus1 = xr.open_dataset(path_netcdf_in + str(year+1) + "_gsmap_op_p.nc")
   file_year_plus1 = file_year_plus1.sel(time = file_year_plus1.time.dt.year == year)
   encoding = {v: {'zlib': True, 'complevel': 5} for v in ["p"]}
-  file_merged = xr.concat([file_year, file_year_plus1], dim="time")
-  np.round(file_merged, 1).to_netcdf(path_netcdf_out + str(year) + "_gsmap_op.nc", encoding=encoding, engine='netcdf4')
-
+  for day_i in np.unique(file_merged["time"].dt.strftime('%m-%d').values):
+    file_merged_i = file_merged.sel(time=file_merged["time"].dt.strftime('%m-%d') == day_i)
+    np.round(file_merged_i, 1).to_netcdf(path_netcdf_out + str(year) + "-" + day_i + "_gsmap_op.nc",
+                                         encoding=encoding, engine='netcdf4')
   
 import os
 [os.remove(i) for i in sorted(glob.glob("./data/processed/gridded/GSMaP_op/*_p.nc"))]
