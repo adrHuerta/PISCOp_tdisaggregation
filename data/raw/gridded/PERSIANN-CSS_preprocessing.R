@@ -2,6 +2,7 @@ reticulate::use_virtualenv("/home/waldo/PycharmProjects/forR/venv/", required=TR
 reticulate::repl_python()
 
 import xarray as xr
+import datetime
 import numpy as np
 import glob
 import pandas as pd
@@ -28,7 +29,7 @@ for i_year in files_early:
     to_compute = i_year_nc.isel(time=i_time)
     to_save = to_compute.assign_coords(time=i_time_range[i_time])
     to_save = to_save.reindex_like(PISCOp_grid, method="nearest").p
-    #to_save = to_save.where((to_save >= 0) | to_save.isnull())
+    to_save = to_save.where((to_save >= 0))
     #to_save = to_save.astype("float32")
     to_save = to_save.rio.write_nodata(np.nan)
     to_save = to_save.rio.write_crs("EPSG:3857")
@@ -42,7 +43,7 @@ for i_year in files_early:
   gpmimerg_early = xr.concat(new_i_year_nc, dim="time")
   gpmimerg_early["time"] = pd.to_datetime(gpmimerg_early.time.values) - pd.Timedelta(hours=5)  # UTC to local time
   gpmimerg_early["time"] = pd.to_datetime(gpmimerg_early.time.values).shift(periods=-8, freq="H")  # 7pm-7am daily sum
-  gpmimerg_early.to_netcdf("/home/waldo/Documentos/Repos/PISCOp_tdisaggregation/data/processed/gridded/PERSIANN-CSS/" + i_year_str + "_persiann_css_p.nc", encoding=encoding,
+  gpmimerg_early.to_netcdf("./data/processed/gridded/PERSIANN-CSS/" + i_year_str + "_persiann_css_p.nc", encoding=encoding,
                            engine='netcdf4')
 
 #·····································#
@@ -57,10 +58,14 @@ for year in range(2014,2021):
   file_year_plus1 = file_year_plus1.sel(time = file_year_plus1.time.dt.year == year)
   encoding = {v: {'zlib': True, 'complevel': 5} for v in ["p"]}
   file_merged = xr.concat([file_year, file_year_plus1], dim="time")
-  np.round(file_merged, 1).to_netcdf(path_netcdf_out + str(year) + "_persian_css.nc", encoding=encoding, engine='netcdf4')
-
+  # daily files: best format for next steps
+  for day_i in np.unique(file_merged["time"].dt.strftime('%m-%d').values):
+    file_merged_i = file_merged.sel(time=file_merged["time"].dt.strftime('%m-%d') == day_i)
+    file_merged_i = file_merged_i.interpolate_na(dim="time", method="linear") # filling the gaps
+    np.round(file_merged_i, 1).to_netcdf(path_netcdf_out + str(year) + "-" + day_i + "_persian_css.nc",
+                                         encoding=encoding, engine='netcdf4')
 
   
 import os
 [os.remove(i) for i in sorted(glob.glob("./data/processed/gridded/PERSIANN-CSS/*_p.nc"))]
-  
+[os.remove(i) for i in sorted(glob.glob("./data/processed/gridded/PERSIANN-CSS/2014-*.nc"))]
