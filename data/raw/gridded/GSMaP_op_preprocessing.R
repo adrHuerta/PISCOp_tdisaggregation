@@ -69,4 +69,4 @@ for year in range(2014,2021):
   
 import os
 [os.remove(i) for i in sorted(glob.glob("./data/processed/gridded/GSMaP_op/*_p.nc"))]
-  
+[os.remove(i) for i in sorted(glob.glob("./data/processed/gridded/GSMaP_op/2014-*.nc"))]  

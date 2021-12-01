@@ -61,7 +61,7 @@ for year in range(2014,2021):
 
 import os
 [os.remove(i) for i in sorted(glob.glob("./data/processed/gridded/IMERG-Early/*_p.nc"))]
-  
+[os.remove(i) for i in sorted(glob.glob("./data/processed/gridded/IMERG-Early/2014-*.nc"))]  
 #file_merged_daily = file_merged.resample(time="1D").sum()
   #file_merged_daily2hourly = file_merged_daily.resample(time="1H").ffill()
   #file_merged_daily2hourly = xr.Dataset(data_vars=dict(p=(["time", "latitude", "longitude"], np.repeat(file_merged_daily.p, 24, axis=0))),
