@@ -19,16 +19,16 @@ dailyVar_02_28 <- dailyVar[1393:1416]
 dailyVar <- dailyVar[-c(1393:1416)]
 
 #
-output_file = "data/processed/gridded/mean_SATc"
+output_file = "data/processed/gridded/SATc"
 
-lapply(1393:1395, function(i){
+lapply(1:length(dailyVar), function(i){
   
   time_values <- dailyVar[[i]]
   
   i_aws <- c(sapply(time_values, function(z){list.files("./data/processed/gridded/AWSs", pattern = z, full.names = TRUE)}))
   i_aws <- raster::brick(lapply(i_aws, raster::raster))
   
-  i_mean_sat_ts <- c(sapply(time_values, function(z){list.files("./data/processed/gridded/mean_SAT", pattern = z, full.names = TRUE)}))
+  i_mean_sat_ts <- c(sapply(time_values, function(z){list.files("./data/processed/gridded/SAT", pattern = z, full.names = TRUE)}))
   i_mean_sat <- raster::brick(lapply(i_mean_sat_ts, raster::raster))
   names(i_mean_sat) <- sapply(i_mean_sat_ts, function(z){strsplit(strsplit(z, "/")[[1]][6], "[.]")[[1]][1]})
   i_mean_sat_to_save = i_mean_sat[[19:24]]
@@ -62,7 +62,7 @@ lapply(1393:1395, function(i){
     raster::writeRaster(x = i_mean_sat_to_save[[zi]],
                         varname = "p",
                         filename = file.path(output_file,
-                                             sprintf("%s.nc", names(i_mean_sat_to_save[[zi]]))),
+                                             sprintf("SATc_%s.nc", names(i_mean_sat_to_save[[zi]]))),
                         datatype = 'FLT4S', force_v4 = TRUE, compression = 7,
                         overwrite = TRUE)
     })
@@ -86,7 +86,7 @@ lapply(1:length(dailyVar_02_28), function(i){
   i_aws <- unlist(sapply(time_values, function(z){list.files("./data/processed/gridded/AWSs", pattern = z, full.names = TRUE)}))
   i_aws <- raster::brick(lapply(i_aws, raster::raster))
   
-  i_mean_sat_ts <- unlist(sapply(time_values, function(z){list.files("./data/processed/gridded/mean_SAT", pattern = z, full.names = TRUE)}))
+  i_mean_sat_ts <- unlist(sapply(time_values, function(z){list.files("./data/processed/gridded/SAT", pattern = z, full.names = TRUE)}))
   i_mean_sat <- raster::brick(lapply(i_mean_sat_ts, raster::raster))
   names(i_mean_sat) <- sapply(i_mean_sat_ts, function(z){strsplit(strsplit(z, "/")[[1]][6], "[.]")[[1]][1]})
   i_mean_sat_to_save = i_mean_sat[[19:26]]
@@ -120,7 +120,7 @@ lapply(1:length(dailyVar_02_28), function(i){
     raster::writeRaster(x = i_mean_sat_to_save[[zi]],
                         varname = "p",
                         filename = file.path(output_file,
-                                             sprintf("%s.nc", names(i_mean_sat_to_save[[zi]]))),
+                                             sprintf("SATc_%s.nc", names(i_mean_sat_to_save[[zi]]))),
                         datatype = 'FLT4S', force_v4 = TRUE, compression = 7,
                         overwrite = TRUE)
   })
