@@ -1,4 +1,4 @@
-reticulate::use_virtualenv("/home/waldo/PycharmProjects/forR/venv/", required = TRUE)
+reticulate::use_virtualenv("/home/adrian/Documents/Repos/wa_eps_budyko_cc/venv/", required = TRUE)
 reticulate::repl_python()
 
 import numpy as np
@@ -16,9 +16,9 @@ time_range = (pd.date_range(start = "2015-01-01", periods = len(PISCOpd.time), f
 encoding = {v: {'zlib': True, 'complevel': 5} for v in ["p"]}
 
 def getting_hourly_files(step_time):
-  # from mean_SATc
+  # from SATc
   # hourly files
-  hourly_files = sorted(glob.glob("data/processed/gridded/mean_SATc/mean_SAT_" + step_time + "*.nc"))
+  hourly_files = sorted(glob.glob("data/processed/gridded/SATc/SATc_" + step_time + "*.nc"))
   hourly_files_dates = pd.to_datetime([text.split("/")[-1].split("_")[-1].split(".nc")[0] for text in hourly_files], format="%Y.%m.%d.%H.%M.%S")
   hourly_files = [xr.open_dataset(grid) for grid in hourly_files]
   # hourly 2 daily
@@ -29,10 +29,10 @@ def getting_hourly_files(step_time):
   PISCOpd_hourly_files = [PISCOpd_daily_file * (xr.apply_ufunc(wetOdray, daily_file, PISCOpd_daily_file, grid, vectorize=True)) for grid in hourly_files]
   PISCOpd_hourly_files = np.round(xr.concat(PISCOpd_hourly_files, dim="time").drop("crs"), 1)
   PISCOpd_hourly_files["time"] = hourly_files_dates
-  PISCOpd_hourly_files.to_netcdf("data/processed/gridded/PISCOp_hourly/PISCOp_hourly_" + step_time.replace(".","-") + ".nc", encoding=encoding, engine='netcdf4')
+  PISCOpd_hourly_files.to_netcdf("data/processed/gridded/PISCOp_h/PISCOp_h_" + step_time.replace(".","-") + ".nc", encoding=encoding, engine='netcdf4')
   
-  # from mean_SAT
-  hourly_files_1 = sorted(glob.glob("data/processed/gridded/mean_SAT/mean_SAT_" + step_time.replace(".","-") + "*.nc"))
+  # from SAT
+  hourly_files_1 = sorted(glob.glob("data/processed/gridded/SAT/SAT_" + step_time.replace(".","-") + "*.nc"))
   hourly_files_dates_1 = pd.to_datetime([text.split("/")[-1].split("_")[-1].split(".nc")[0] for text in hourly_files_1], format="%Y-%m-%d %H:%M:%S")
   hourly_files_1 = [xr.open_dataset(grid) for grid in hourly_files_1]
   # hourly 2 daily
@@ -43,7 +43,7 @@ def getting_hourly_files(step_time):
   PISCOpd_hourly_files_1 = [PISCOpd_daily_file_1 * (xr.apply_ufunc(wetOdray, daily_file_1, PISCOpd_daily_file, grid, vectorize=True)) for grid in hourly_files_1]
   PISCOpd_hourly_files_1 = np.round(xr.concat(PISCOpd_hourly_files_1, dim="time").drop("crs"), 1)
   PISCOpd_hourly_files_1["time"] = hourly_files_dates_1
-  PISCOpd_hourly_files_1.to_netcdf("data/processed/gridded/PISCOp_hourly_mean_SAT/PISCOp_hourly_mean_SAT_" + step_time.replace(".","-") + ".nc", encoding=encoding, engine='netcdf4')  
+  PISCOpd_hourly_files_1.to_netcdf("data/processed/gridded/PISCOp_h_non-DBC/PISCOp_h_noDBC_" + step_time.replace(".","-") + ".nc", encoding=encoding, engine='netcdf4')  
 
 
 Parallel(n_jobs=1, verbose=50)(
