@@ -62,7 +62,7 @@ lapply(1:length(dailyVar), function(i){
     raster::writeRaster(x = i_mean_sat_to_save[[zi]],
                         varname = "p",
                         filename = file.path(output_file,
-                                             sprintf("SATc_%s.nc", names(i_mean_sat_to_save[[zi]]))),
+                                             sprintf("SATc_%s.nc", strsplit(names(i_mean_sat_to_save[[zi]]), "_")[[1]][2])),
                         datatype = 'FLT4S', force_v4 = TRUE, compression = 7,
                         overwrite = TRUE)
     })
@@ -120,7 +120,7 @@ lapply(1:length(dailyVar_02_28), function(i){
     raster::writeRaster(x = i_mean_sat_to_save[[zi]],
                         varname = "p",
                         filename = file.path(output_file,
-                                             sprintf("SATc_%s.nc", names(i_mean_sat_to_save[[zi]]))),
+                                             sprintf("SATc_%s.nc", strsplit(names(i_mean_sat_to_save[[zi]]), "_")[[1]][2])),
                         datatype = 'FLT4S', force_v4 = TRUE, compression = 7,
                         overwrite = TRUE)
   })
