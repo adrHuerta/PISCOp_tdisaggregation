@@ -1,4 +1,4 @@
-reticulate::use_virtualenv("/home/adrian/Documents/Repos/wa_eps_budyko_cc/venv/", required = TRUE)
+reticulate::use_virtualenv("/home/waldo/PycharmProjects/forR/venv/", required = TRUE)
 reticulate::repl_python()
 
 import numpy as np
