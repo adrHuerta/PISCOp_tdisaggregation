@@ -28,7 +28,7 @@ for i_year in files_early:
     print(i_time)
     to_compute = i_year_nc.isel(time=i_time)
     to_save = to_compute.assign_coords(time=i_time_range[i_time])
-    to_save = to_save.reindex_like(PISCOp_grid, method="nearest").p
+    to_save = to_save.reindex({"latitude":PISCOp_grid.latitude.values, "longitude":PISCOp_grid.longitude.values}, method="nearest").p
     to_save = to_save.where((to_save >= 0))
     #to_save = to_save.astype("float32")
     to_save = to_save.rio.write_nodata(np.nan)
@@ -58,7 +58,7 @@ for year in range(2014,2021):
   file_year_plus1 = file_year_plus1.sel(time = file_year_plus1.time.dt.year == year)
   encoding = {v: {'zlib': True, 'complevel': 5} for v in ["p"]}
   file_merged = xr.concat([file_year, file_year_plus1], dim="time")
-  # daily files: best format for next steps
+  # monthly files
   for day_i in np.unique(file_merged["time"].dt.strftime('%m-%d').values):
     file_merged_i = file_merged.sel(time=file_merged["time"].dt.strftime('%m-%d') == day_i)
     file_merged_i = file_merged_i.interpolate_na(dim="time", method="linear") # filling the gaps
