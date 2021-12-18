@@ -24,11 +24,12 @@ for i_year in files_early:
   for i_time in range(len(i_year_nc.z)):
     to_compute = i_year_nc.isel(z=i_time)
     to_save = to_compute.assign_coords(time=i_time_range[i_time])
-    to_save = to_save.reindex_like(PISCOp_grid, method="nearest").variable
+    to_save = to_save.reindex({"latitude":PISCOp_grid.latitude.values, "longitude":PISCOp_grid.longitude.values}, method="nearest").p
     to_save = to_save.where((to_save >= 0) | to_save.isnull())
     to_save = to_save.rio.write_nodata(np.nan)
     to_save = to_save.rio.write_crs("EPSG:3857")
     to_save = to_save.rio.interpolate_na(method="nearest")
+    to_save = to_save.drop("crs")
     to_save = to_save.where(PISCOp_grid == True)
     to_save = to_save.astype("float32")
     to_save = np.round(to_save, 1)
@@ -53,23 +54,12 @@ for year in range(2014,2021):
   file_year_plus1 = file_year_plus1.sel(time = file_year_plus1.time.dt.year == year)
   encoding = {v: {'zlib': True, 'complevel': 5} for v in ["p"]}
   file_merged = xr.concat([file_year, file_year_plus1], dim="time")
-  # daily files: best format for next steps
-  for day_i in np.unique(file_merged["time"].dt.strftime('%m-%d').values):
-    file_merged_i = file_merged.sel(time=file_merged["time"].dt.strftime('%m-%d') == day_i)
+  # monthly files
+  for day_i in np.unique(file_merged["time"].dt.strftime('%m').values):
+    file_merged_i = file_merged.sel(time=file_merged["time"].dt.strftime('%m') == day_i)
     np.round(file_merged_i, 1).to_netcdf(path_netcdf_out + str(year) + "-" + day_i + "_imerg_early.nc",
                                          encoding=encoding, engine='netcdf4')
 
 import os
 [os.remove(i) for i in sorted(glob.glob("./data/processed/gridded/IMERG-Early/*_p.nc"))]
 [os.remove(i) for i in sorted(glob.glob("./data/processed/gridded/IMERG-Early/2014-*.nc"))]  
-#file_merged_daily = file_merged.resample(time="1D").sum()
-  #file_merged_daily2hourly = file_merged_daily.resample(time="1H").ffill()
-  #file_merged_daily2hourly = xr.Dataset(data_vars=dict(p=(["time", "latitude", "longitude"], np.repeat(file_merged_daily.p, 24, axis=0))),
-  #                                       coords=dict(time=file_merged.time, latitude=file_merged.latitude, longitude=file_merged.longitude))
-  #file_merged_daily2hourly = (np.round(100 * (file_merged + 0.000001)/(file_merged_daily2hourly + 0.000001), 2))
-  #print(file_merged_daily2hourly.sizes)
-  #file_merged_daily2hourly.to_netcdf(path_netcdf_out + str(year) + "_gpm_imerg_early_pr.nc", encoding=encoding, engine='netcdf4')
-  
-  
-  
-  

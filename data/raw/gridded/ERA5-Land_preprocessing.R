@@ -2,6 +2,7 @@ reticulate::use_virtualenv("/home/waldo/PycharmProjects/forR/venv/", required = 
 reticulate::repl_python()
 
 import xarray as xr
+import datetime
 import numpy as np
 import glob
 import pandas as pd
@@ -15,7 +16,6 @@ PISCOp_grid.values[~np.isnan(PISCOp_grid.values)] = 1
 files_era5land = sorted(glob.glob("./data/raw/gridded/ERA5-Land/*.nc"))[1:]
 
 for i_year in files_era5land:
-  
   i_year_nc = xr.open_dataset(i_year)
   i_year_str = i_year.split("/")[5].split(".")[0]
   
@@ -28,41 +28,44 @@ for i_year in files_era5land:
       to_compute_previous = to_compute_previous.sel(time = i_time - pd.Timedelta(hours=1))
       to_save = (to_compute - to_compute_previous)*1000
       to_save = to_save.assign_coords(time=i_time)
-      to_save = to_save.reindex_like(PISCOp_grid, method="nearest").tp
+      to_save = to_save.reindex({"latitude":PISCOp_grid.latitude.values, "longitude":PISCOp_grid.longitude.values}, method="nearest").tp
       to_save = to_save.where((to_save >= 0) | to_save.isnull())
-      to_save = to_save.rio.write_crs(shp_Peru.crs)
       to_save = to_save.rio.write_nodata(np.nan)
+      to_save = to_save.rio.write_crs("EPSG:3857")
       to_save = to_save.rio.interpolate_na(method = "nearest")
+      to_save = to_save.where(PISCOp_grid == True)
       to_save = to_save.astype("float32")
       to_save = np.round(to_save, 1)
-      to_save = to_save.where(PISCOp_grid == True).drop(["z", "spatial_ref"]).to_dataset(name = "p")
+      to_save = to_save.drop(["z", "spatial_ref"]).to_dataset(name="p")
       
     elif i_time.strftime('%H') == "01":
       
       to_save = to_compute*1000
       to_save = to_save.assign_coords(time=i_time)
-      to_save = to_save.reindex_like(PISCOp_grid, method="nearest").tp
+      to_save = to_save.reindex({"latitude":PISCOp_grid.latitude.values, "longitude":PISCOp_grid.longitude.values}, method="nearest").tp
       to_save = to_save.where((to_save >= 0) | to_save.isnull())
-      to_save = to_save.rio.write_crs(shp_Peru.crs)
       to_save = to_save.rio.write_nodata(np.nan)
-      to_save = to_save.rio.interpolate_na(method = "nearest")
+      to_save = to_save.rio.write_crs("EPSG:3857")
+      to_save = to_save.rio.interpolate_na(method="nearest")
+      to_save = to_save.where(PISCOp_grid == True)
       to_save = to_save.astype("float32")
       to_save = np.round(to_save, 1)
-      to_save = to_save.where(PISCOp_grid == True).drop(["z", "spatial_ref"]).to_dataset(name = "p")
+      to_save = to_save.drop(["z", "spatial_ref"]).to_dataset(name="p")
       
     else:
       to_compute_previous = i_year_nc.sel(time = i_time - pd.Timedelta(hours=1))
       to_save = (to_compute - to_compute_previous)*1000
       to_save = to_save.assign_coords(time=i_time)
-      to_save = to_save.reindex_like(PISCOp_grid, method="nearest").tp
+      to_save = to_save.reindex({"latitude":PISCOp_grid.latitude.values, "longitude":PISCOp_grid.longitude.values}, method="nearest").tp
       to_save = to_save.where((to_save >= 0) | to_save.isnull())
-      to_save = to_save.rio.write_crs(shp_Peru.crs)
       to_save = to_save.rio.write_nodata(np.nan)
-      to_save = to_save.rio.interpolate_na(method = "nearest")
+      to_save = to_save.rio.write_crs("EPSG:3857")
+      to_save = to_save.rio.interpolate_na(method="nearest")
+      to_save = to_save.where(PISCOp_grid == True)
       to_save = to_save.astype("float32")
       to_save = np.round(to_save, 1)
-      to_save = to_save.where(PISCOp_grid == True).drop(["z", "spatial_ref"]).to_dataset(name = "p")
-    
+      to_save = to_save.drop(["z", "spatial_ref"]).to_dataset(name="p")
+      
     #print(i_time)
     new_i_year_nc.append(to_save)
   
@@ -85,9 +88,12 @@ for year in range(2014,2021):
   
   encoding = {v: {'zlib': True, 'complevel': 5} for v in ["p"]}
   file_merged = xr.concat([file_year, file_year_plus1], dim="time")
-  np.round(file_merged, 1).to_netcdf(path_netcdf_out + str(year) + "_era5land.nc", encoding=encoding, engine='netcdf4')
-
+  # monthly files
+  for day_i in np.unique(file_merged["time"].dt.strftime('%m').values):
+    file_merged_i = file_merged.sel(time=file_merged["time"].dt.strftime('%m') == day_i)
+    np.round(file_merged_i, 1).to_netcdf(path_netcdf_out + str(year) + "-" + day_i + "_era5land.nc",
+                                         encoding=encoding, engine='netcdf4')
   
 import os
 [os.remove(i) for i in sorted(glob.glob("./data/processed/gridded/ERA5-Land/*_p.nc"))]
-  
+[os.remove(i) for i in sorted(glob.glob("./data/processed/gridded/ERA5-Land/2014-*.nc"))]
