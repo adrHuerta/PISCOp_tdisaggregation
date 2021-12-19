@@ -25,10 +25,11 @@ res[res["EQUAL"] == False]
 
 #ema_data_shifted_rr = []
 ema_data_shifted = []
-
+ema_data_non_shifted = []
 for station in ema_data.columns:
   
   hourly_p = ema_data[station]
+  hourly_p_non_shifted = hourly_p["2014-01-01":"2020-12-31"]
   hourly_p = hourly_p.shift(periods=-8, freq="H")["2014-01-01":"2020-12-31"]
   #daily_p = hourly_p.resample("1D").apply(lambda x: x.sum() if x.isnull().sum() < 1 else np.nan)
   #daily_p = daily_p.repeat(24)
@@ -36,11 +37,14 @@ for station in ema_data.columns:
   
   #ema_data_shifted_rr.append((hourly_p + 0.000001) * 100/ (daily_p + 0.000001) )
   ema_data_shifted.append(hourly_p)
+  ema_data_non_shifted.append(hourly_p_non_shifted)
 
 #ema_data_shifted_rr = pd.concat(ema_data_shifted_rr, axis=1)
 ema_data_shifted = pd.concat(ema_data_shifted, axis=1)
-
+ema_data_non_shifted = pd.concat(ema_data_non_shifted, axis=1)
 
 #np.round(ema_data_shifted_rr, 2).to_csv("/content/drive/MyDrive/Google_Colab_temp/ema_data_rr_77.csv")
 np.round(ema_data_shifted, 1).to_csv("./data/raw/obs/AWS/AWS_data.csv")
+np.round(ema_data_non_shifted, 1).to_csv("./data/raw/obs/AWS/AWS_non_shifted_data.csv")
 ema_xyz.to_csv("./data/raw/obs/AWS/AWS_xyz.csv")
+
