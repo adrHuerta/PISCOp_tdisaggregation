@@ -1,7 +1,7 @@
 rm(list = ls())
 "%>%" = magrittr::`%>%`
 
-source('./src/oidw.R')
+# source('./src/oidw.R')
 
 # observed data
 aws_data <- readRDS("./data/processed/obs/AWS/AWSs.RDS")
@@ -12,23 +12,23 @@ PISCOp_grid <- raster::raster("./data/others/PISCOp_grid_mask.nc")
 output_file = "data/processed/gridded/AWSs"
 
 # interpolation
-parallel::mclapply(1:nrow(aws_data$values), function(time_step){
-    
-    xyz_i <- aws_data$xyz
-    xyz_i@data$value <- as.numeric(aws_data$values[time_step, ])
-    xyz_i <- xyz_i[complete.cases(xyz_i@data), ]
-
-    
-    idw <- O_IDW(formula_i = value ~ 1, location_i = xyz_i, grid_i = PISCOp_grid)
-    name_to_save <- format(time(aws_data$values[time_step, ]), "%Y-%m-%d %H:%M:%S")
-    
-    raster::writeRaster(x = idw,
-                        varname = "p",
-                        filename = file.path(output_file,
-                                             sprintf("%s_%s.nc", "AWSs",  name_to_save)),
-                        datatype = 'FLT4S', force_v4 = TRUE, compression = 7)
-  
-  }, mc.cores = 12)
+# parallel::mclapply(1:nrow(aws_data$values), function(time_step){
+#     
+#     xyz_i <- aws_data$xyz
+#     xyz_i@data$value <- as.numeric(aws_data$values[time_step, ])
+#     xyz_i <- xyz_i[complete.cases(xyz_i@data), ]
+# 
+#     
+#     idw <- O_IDW(formula_i = value ~ 1, location_i = xyz_i, grid_i = PISCOp_grid)
+#     name_to_save <- format(time(aws_data$values[time_step, ]), "%Y-%m-%d %H:%M:%S")
+#     
+#     raster::writeRaster(x = idw,
+#                         varname = "p",
+#                         filename = file.path(output_file,
+#                                              sprintf("%s_%s.nc", "AWSs",  name_to_save)),
+#                         datatype = 'FLT4S', force_v4 = TRUE, compression = 7)
+#   
+#   }, mc.cores = 12)
 
 ####
 ####
@@ -47,8 +47,8 @@ parallel::mclapply(1:nrow(aws_data$values), function(time_step){
   
   raster::writeRaster(x = idw,
                       varname = "p",
-                      filename = file.path("data/processed/gridded/AWSs_idw",
-                                           sprintf("%s_%s.nc", "AWSs_idw",  name_to_save)),
+                      filename = file.path("data/processed/gridded/AWSs",
+                                           sprintf("%s_%s.nc", "AWSs",  name_to_save)),
                       datatype = 'FLT4S', force_v4 = TRUE, compression = 7)
   
 }, mc.cores = 12)
@@ -71,7 +71,7 @@ encoding = {v: {'zlib': True, 'complevel': 5} for v in ["p"]}
 def getting_hourly_files(step_time):
   # from mean_SATc
   # hourly files
-  hourly_files = sorted(glob.glob("data/processed/gridded/AWSs_idw/AWSs_idw_" + step_time + "*.nc"))
+  hourly_files = sorted(glob.glob("data/processed/gridded/AWSs/AWSs_" + step_time + "*.nc"))
   hourly_files_dates = pd.to_datetime([text.split("/")[-1].split("_")[-1].split(".nc")[0] for text in hourly_files], format="%Y-%m-%d %H:%M:%S")
   hourly_files = [xr.open_dataset(grid) for grid in hourly_files]
   # hourly 2 daily
