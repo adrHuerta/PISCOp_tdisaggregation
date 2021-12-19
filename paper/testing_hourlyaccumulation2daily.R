@@ -87,3 +87,7 @@ lapply(1:ncol(aws_shifted_data), function(zz){
       use = "pairwise.complete.obs", method = "spearman")
   
 }) %>% unlist() %>% boxplot() # the same
+
+# adr <- aws_data[1:50, 100]
+# zoo::coredata(adr) <- c(0:23, 0:23, 0, 1)
+# cbind(xts::lag.xts(adr, k =-8), adr) %>% View()
