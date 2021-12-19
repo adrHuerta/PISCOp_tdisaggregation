@@ -43,7 +43,7 @@ def getting_hourly_files(step_time):
   PISCOpd_hourly_files_1 = [PISCOpd_daily_file_1 * (xr.apply_ufunc(wetOdray, daily_file_1, PISCOpd_daily_file, grid, vectorize=True)) for grid in hourly_files_1]
   PISCOpd_hourly_files_1 = np.round(xr.concat(PISCOpd_hourly_files_1, dim="time").drop("crs"), 1)
   PISCOpd_hourly_files_1["time"] = hourly_files_dates_1
-  PISCOpd_hourly_files_1.to_netcdf("data/processed/gridded/PISCOp_h_non-DBC/PISCOp_h_noDBC_" + step_time.replace(".","-") + ".nc", encoding=encoding, engine='netcdf4')  
+  PISCOpd_hourly_files_1.to_netcdf("data/processed/gridded/PISCOp_h_non-DBC/PISCOp_h_non-DBC_" + step_time.replace(".","-") + ".nc", encoding=encoding, engine='netcdf4')  
 
 
 Parallel(n_jobs=1, verbose=50)(
