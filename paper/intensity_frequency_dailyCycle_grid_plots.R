@@ -280,16 +280,23 @@ AWSs_gridded <- list.files(path = "./paper/output", pattern = "AWSs_hourly_hourl
 
 to_plot_df <- rbind(PISCOp_hourly, PISCOp_hourly_mean_SAT, AWSs_gridded)
 to_plot_df$data <- factor(to_plot_df$data, levels = c("PISCOp_h", "PISCOp_h_non-DBC", "AWSs"))
-
+to_plot_df$p <- to_plot_df$p
 
   ggplot() + 
-  geom_raster(data = subset(subset(to_plot_df, var == "maxvalue"), data == "PISCOp_h"), aes(x = x, y = y, fill = p)) + 
-  geom_raster(data = subset(subset(to_plot_df, var == "maxvalue"), data == "PISCOp_h_non-DBC"), aes(x = x, y = y, fill = p)) + 
-  geom_point(data = subset(subset(to_plot_df, var == "maxvalue"), data == "AWSs"), aes(x = x, y = y, fill = p, colour = p), shape = 21, size = 1, show.legend = FALSE) +
-  scale_colour_gradientn(colors = colorRampPalette(ochRe::ochre_palettes$olsen_seq)(100), limits = c(0, 23)) + 
-  scale_fill_gradientn(colors = colorRampPalette(ochRe::ochre_palettes$olsen_seq)(100),
+  geom_raster(data = subset(subset(to_plot_df, var == "maxvalue"), data == "PISCOp_h") %>% 
+                transform(p = p),
+              aes(x = x, y = y, fill = p)) + 
+  geom_raster(data = subset(subset(to_plot_df, var == "maxvalue"), data == "PISCOp_h_non-DBC") %>%
+                transform(p = p),
+              aes(x = x, y = y, fill = p)) + 
+  geom_point(data = subset(subset(to_plot_df, var == "maxvalue"), data == "AWSs") %>% 
+               transform(p = p),
+             aes(x = x, y = y, fill = p, colour = p), shape = 21, size = 1, show.legend = FALSE) +
+  scale_colour_gradientn(colors = colorRampPalette(ochRe::ochre_palettes$olsen_seq)(24)) + 
+  scale_fill_gradientn(colors = colorRampPalette(ochRe::ochre_palettes$olsen_seq)(24),
                        "Time with max value (hour)",
                        limits = c(0, 23),
+                       breaks = seq(0, 23, 2),
                        guide = guide_colorbar(frame.colour = "black",
                                               ticks.colour = "black",
                                               title.position = "left",
@@ -300,13 +307,13 @@ to_plot_df$data <- factor(to_plot_df$data, levels = c("PISCOp_h", "PISCOp_h_non-
   geom_polygon(data = shp_sa,
                aes(x = long, y = lat, group = group),
                fill = NA, colour = "gray40", size = 0.4) +
-  coord_quickmap(expand = c(0, 0), ylim = c(-18.575, 0.1), xlim = c(-81.325, -68.25)) + 
-  labs(x = "", y = "") + 
-  theme_bw()  +
-  theme(axis.ticks = element_blank(),
-        axis.text = element_blank(),
-        axis.title = element_blank()) +
-  facet_grid(~data) -> pp_01
+    coord_quickmap(expand = c(0, 0), ylim = c(-18.575, 0.1), xlim = c(-81.325, -68.25)) + 
+    labs(x = "", y = "") + 
+    theme_bw()  +
+    theme(axis.ticks = element_blank(),
+          axis.text = element_blank(),
+          axis.title = element_blank()) +
+    facet_grid(~data) -> pp_01
 
   ggplot() + 
   geom_raster(data = subset(subset(to_plot_df, var == "amplitude"), data == "PISCOp_h"), aes(x = x, y = y, fill = p)) + 
