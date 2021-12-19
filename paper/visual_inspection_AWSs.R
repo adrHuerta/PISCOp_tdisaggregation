@@ -13,23 +13,23 @@ aws_ts_vi <- aws$values[, aws_sp_vi$CODE]
 
 
 #
-id_aws_vi <- raster::extract(raster::raster(dir("data/processed/gridded/PISCOp_hourly/", full.names = TRUE)[1]),
+id_aws_vi <- raster::extract(raster::raster(dir("data/processed/gridded/PISCOp_h/", full.names = TRUE)[1]),
                              aws_sp_vi, cellnumbers = TRUE)[,1]
   
-piscop_hourly_ts_vi <- dir("data/processed/gridded/PISCOp_hourly", full.names = TRUE) %>%
+piscop_hourly_ts_vi <- dir("data/processed/gridded/PISCOp_h", full.names = TRUE) %>%
   parallel::mclapply(function(x) t(raster::brick(x)[id_aws_vi]), mc.cores = 3) %>%
   do.call(rbind, .) %>%
   xts::xts(., time(aws_ts_vi)) %>%
   setNames(colnames(aws_ts_vi))
 
-piscop_hourly_noBC_ts_vi <- dir("data/processed/gridded/PISCOp_hourly_mean_SAT", full.names = TRUE) %>%
+piscop_hourly_noBC_ts_vi <- dir("data/processed/gridded/PISCOp_h_non-DBC", full.names = TRUE) %>%
   parallel::mclapply(function(x) t(raster::brick(x)[id_aws_vi]), mc.cores = 3) %>%
   do.call(rbind, .) %>%
   xts::xts(., time(aws_ts_vi)) %>%
   setNames(colnames(aws_ts_vi))
 
 cbind(piscop_hourly_ts_vi[,1], piscop_hourly_noBC_ts_vi[,1], aws_ts_vi[, 1]) %>%
-  setNames(c("PISCOp_hourly", "PISCOp_hourly_noBC", "AWS")) %>% 
+  setNames(c("PISCOp_h", "PISCOp_h_non-DBC", "AWS")) %>% 
   .["2017-01-30/2017-02-05"] %>%
   fortify() %>%
   reshape2::melt(., "Index") %>% 
@@ -42,7 +42,7 @@ cbind(piscop_hourly_ts_vi[,1], piscop_hourly_noBC_ts_vi[,1], aws_ts_vi[, 1]) %>%
            size = 4) -> p1
 
 cbind(piscop_hourly_ts_vi[,2], piscop_hourly_noBC_ts_vi[,2], aws_ts_vi[, 2]) %>%
-  setNames(c("PISCOp_hourly", "PISCOp_hourly_noBC", "AWS")) %>% 
+  setNames(c("PISCOp_h", "PISCOp_h_non-DBC", "AWS")) %>% 
   .["2016-02-01/2016-02-07"] %>%
   fortify() %>%
   reshape2::melt(., "Index") %>% 
@@ -55,7 +55,7 @@ cbind(piscop_hourly_ts_vi[,2], piscop_hourly_noBC_ts_vi[,2], aws_ts_vi[, 2]) %>%
            size = 4) -> p2
 
 cbind(piscop_hourly_ts_vi[,3], piscop_hourly_noBC_ts_vi[,3], aws_ts_vi[, 3]) %>%
-  setNames(c("PISCOp_hourly", "PISCOp_hourly_noBC", "AWS")) %>% 
+  setNames(c("PISCOp_h", "PISCOp_h_non-DBC", "AWS")) %>% 
   .["2018-01-15/2018-01-22"] %>%
   fortify() %>%
   reshape2::melt(., "Index") %>% 
@@ -68,7 +68,7 @@ cbind(piscop_hourly_ts_vi[,3], piscop_hourly_noBC_ts_vi[,3], aws_ts_vi[, 3]) %>%
            size = 4) -> p3
 
 cbind(piscop_hourly_ts_vi[,4], piscop_hourly_noBC_ts_vi[,4], aws_ts_vi[, 4]) %>%
-  setNames(c("PISCOp_hourly", "PISCOp_hourly_noBC", "AWS")) %>% 
+  setNames(c("PISCOp_h", "PISCOp_h_non-DBC", "AWS")) %>% 
   .["2019-01-24/2019-01-31"] %>%
   fortify() %>%
   reshape2::melt(., "Index") %>% 
@@ -81,7 +81,7 @@ cbind(piscop_hourly_ts_vi[,4], piscop_hourly_noBC_ts_vi[,4], aws_ts_vi[, 4]) %>%
            size = 4) -> p4
 
 cbind(piscop_hourly_ts_vi[,5], piscop_hourly_noBC_ts_vi[,5], aws_ts_vi[, 5]) %>%
-  setNames(c("PISCOp_hourly", "PISCOp_hourly_noBC", "AWS")) %>% 
+  setNames(c("PISCOp_h", "PISCOp_h_non-DBC", "AWS")) %>% 
   .["2017-02-01/2017-02-07"] %>%
   fortify() %>%
   reshape2::melt(., "Index") %>% 
@@ -95,7 +95,7 @@ cbind(piscop_hourly_ts_vi[,5], piscop_hourly_noBC_ts_vi[,5], aws_ts_vi[, 5]) %>%
 
 
 cbind(piscop_hourly_ts_vi[,6], piscop_hourly_noBC_ts_vi[,6], aws_ts_vi[, 6]) %>%
-  setNames(c("PISCOp_hourly", "PISCOp_hourly_noBC", "AWS")) %>% 
+  setNames(c("PISCOp_h", "PISCOp_h_non-DBC", "AWS")) %>% 
   .["2020-02-17/2020-02-24"] %>%
   fortify() %>%
   reshape2::melt(., "Index") %>% 
