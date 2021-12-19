@@ -18,12 +18,13 @@ return res
 
 
 def get_time_of_max_value(x):
+  time_no_7am_7pm = np.array([8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6, 7])
   if all(np.isnan(x)):
-  res = np.nan
-else:
-  res = np.argmax(x)
-return res
-
+    res = np.nan
+  else:
+    res = np.argmax(x)
+    res = time_no_7am_7pm[int(res)]
+  return res
 
 def amplitude_cycle(x):
   res = np.max(x) - np.min(x)
