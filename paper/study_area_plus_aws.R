@@ -12,22 +12,20 @@ shp_peru = file.path(".", "data", "others", "Departamentos.shp") %>%
 
 shp_lakes = file.path(".", "data", "others", "Lagos_lagunas_Project.shp") %>%
   shapefile() %>%
-  .[.@data$are > 100, ] %>%
+  .[.@data$Rasgo_Secu == "Perenne", ] %>%
+  .[.@data$are > 1000, ] %>%
   broom::tidy()
 
 shp_clireg = file.path(".", "data", "others", "SEC_CLIM.shp") %>%
-  shapefile() %>%
-  raster::aggregate(., by = 'MAC_REG') %>%
-  broom::tidy(region = "MAC_REG")  %>%
-  transform(., id2 = ifelse(id == "CO", "PC", ifelse(id == "SEA", "HA", ifelse(id == "SEB", "LA", ifelse(id == "SIOC", "WA", "EA")))))
-shp_clireg$id2 <- factor(shp_clireg$id2, levels = c("PC", "WA", "EA", "HA", "LA"), labels = c("Pacific Coast (PC)",
-                                                                                              "Western Andes (WA)",
-                                                                                              "Eastern Andes (EA)",
-                                                                                              "High Amazon (HA)",
-                                                                                              "Low Amazon (LA)"))
+  shapefile()
+shp_clireg@data$MAIREG = transform(shp_clireg@data, MAIREG = ifelse(MAC_REG == "CO", "CO", ifelse(MAC_REG == "SEA", "SE", ifelse(MAC_REG == "SEB", "SE", ifelse(MAC_REG == "SIOC", "AN", "AN")))))$MAIREG
+shp_clireg <- shp_clireg %>% raster::aggregate(., by = 'MAIREG') %>%  
+  broom::tidy(region = "MAIREG") %>%
+  transform(., id2 = ifelse(id == "CO", "PC", ifelse(id == "SE", "AZ", "AN")))
+shp_clireg$id2 <- factor(shp_clireg$id2, 
+                         levels = c("PC", "AN", "AZ"), 
+                         labels = c("Pacific Coast", "Andes", "Amazon"))
 
-
-region="NAME_1"
 
 shp_sa = file.path(".", "data", "others", "Sudamérica.shp") %>%
   shapefile()
@@ -101,7 +99,8 @@ p3 <- ggplot() +
         #axis.text.y = element_blank(),
         legend.box = 'vertical',
         legend.justification = c(0, 0), legend.position = c(0, 0),
-        legend.background = element_blank())
+        legend.background = element_blank(),
+        plot.margin=unit(c(0,0,0,0), "null"))
 
 
 #
@@ -125,7 +124,8 @@ p4 <- ggplot() +
   #              fill = NA, colour = "gray40", size = 0.5) +
   geom_polygon(data = shp_clireg,
                aes(x = long, y = lat, group = group, fill = id2),
-               colour = "gray50", size = 0.25, alpha = .3) +
+               colour = "gray50", size = 0.25, alpha = .4) +
+  scale_fill_manual(values = c("#4682B4", "#B47846", "#4BB446")) + 
   # scale_fill_gradientn(colors = colorRampPalette(rev(ochRe::ochre_palettes$olsen_seq))(10)[4:10],
   #                      na.value= "lightblue",
   #                      "             Elevation (km)",
@@ -148,8 +148,12 @@ p4 <- ggplot() +
         #axis.text.y = element_blank(),
         legend.box = 'vertical',
         legend.justification = c(0, 0), legend.position = c(0, 0),
-        legend.background = element_blank()) + 
-  guides(fill=guide_legend(title="Regions")) + 
+        legend.background = element_blank(),
+        plot.margin=unit(c(0,0,0,0), "null")) + 
+  geom_polygon(data = shp_lakes,
+               aes(x = long, y = lat, group = group),
+               fill = "lightblue2", colour = "lightblue2", size = 0.5) +
+  guides(fill=guide_legend(title="Main regions")) + 
   geom_label_repel(data = df_countries, aes(x = LON, y = LAT, label = label),
                    fill = "white", size = 1.95, alpha = .8) +  
   geom_label_repel(data = df_chile, aes(x = LON, y = LAT, label = label),
@@ -160,5 +164,5 @@ p4 <- ggplot() +
 cowplot::plot_grid(p4, p3, ncol = 2)
 
 ggsave(file.path(".", "paper", "output", "Figure_02_study_area_stations.jpg"),
-       dpi = 300, scale = 1,
-       width = 8.5, height = 6, units = "in")
+       dpi = 300, scale = 1.5,
+       width = 5.5, height = 4, units = "in")

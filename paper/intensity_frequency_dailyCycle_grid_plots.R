@@ -110,10 +110,11 @@ ggplot() +
   theme_bw()  +
   theme(axis.ticks = element_blank(),
         axis.text = element_blank(),
-        axis.title = element_blank()) + 
+        axis.title = element_blank(),
+        plot.margin=unit(c(0,0,0,0), "null")) + 
   facet_grid(data~season, switch = "y")
   
-ggsave(file.path(".", "paper", "output", "Fig_mean_intensity.jpg"),
+ggsave(file.path(".", "paper", "output", "Figure_07_mean_intensity.jpg"),
        dpi = 300, scale = 1.25,
        width = 7, height = 4, units = "in")
 
@@ -196,7 +197,8 @@ ggplot() +
   theme(axis.ticks = element_blank(),
         axis.text = element_blank(),
         axis.title = element_blank(),
-        legend.position = "bottom") + 
+        legend.position = "bottom",
+        plot.margin=unit(c(0,0,0,0), "null")) + 
   facet_grid(season ~ data, switch = "y") -> pp_01
 
 
@@ -226,12 +228,13 @@ ggplot() +
   theme(axis.ticks = element_blank(),
         axis.text = element_blank(),
         axis.title = element_blank(),
-        legend.position = "bottom") + 
+        legend.position = "bottom",
+        plot.margin=unit(c(0,0,0,0), "null")) + 
   facet_grid(season ~ data, switch = "y") -> pp_02
 
 cowplot::plot_grid(pp_01, pp_02, ncol = 2)
 
-ggsave(file.path(".", "paper", "output", "Fig_mean_frequency.jpg"),
+ggsave(file.path(".", "paper", "output", "Figure_08_mean_frequency.jpg"),
        dpi = 300, scale = 1.25,
        width = 7, height = 4, units = "in")
 
@@ -312,7 +315,8 @@ to_plot_df$p <- to_plot_df$p
     theme_bw()  +
     theme(axis.ticks = element_blank(),
           axis.text = element_blank(),
-          axis.title = element_blank()) +
+          axis.title = element_blank(),
+          plot.margin=unit(c(0,0,0,0), "null")) +
     facet_grid(~data) -> pp_01
 
   ggplot() + 
@@ -338,12 +342,13 @@ to_plot_df$p <- to_plot_df$p
   theme_bw() +
   theme(axis.ticks = element_blank(),
         axis.text = element_blank(),
-        axis.title = element_blank()) +
+        axis.title = element_blank(),
+        plot.margin=unit(c(0,0,0,0), "null")) +
   facet_grid(~data) -> pp_02
 
 
 cowplot::plot_grid(pp_01, pp_02, ncol = 1)
 
-ggsave(file.path(".", "paper", "output", "Fig_daily_cycle_mean.jpg"),
+ggsave(file.path(".", "paper", "output", "Figure_09_daily_cycle_mean.jpg"),
        dpi = 300, scale = 1.25,
        width = 5, height = 4, units = "in")

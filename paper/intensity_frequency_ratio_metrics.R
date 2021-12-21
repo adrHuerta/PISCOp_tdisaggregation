@@ -93,10 +93,11 @@ ggplot() +
   theme(axis.ticks = element_blank(),
         axis.text = element_blank(),
         axis.title = element_blank(),
-        legend.title=element_blank()) + 
+        legend.title=element_blank(),
+        plot.margin=unit(c(0,0,0,0), "null")) + 
   facet_grid(data~season, switch = "y")
 
-ggsave(file.path(".", "paper", "output", "Fig_frequency_ratio.jpg"),
+ggsave(file.path(".", "paper", "output", "Figure_05_frequency_ratio.jpg"),
        dpi = 300, scale = 1.5,
        width = 4, height = 3, units = "in")
 
@@ -162,9 +163,10 @@ to_plot %>%
   theme(axis.ticks = element_blank(),
         axis.text = element_blank(),
         axis.title = element_blank(),
-        legend.title=element_blank()) + 
+        legend.title=element_blank(),
+        plot.margin=unit(c(0,0,0,0), "null")) + 
   facet_grid(data~season, switch = "y")
 
-ggsave(file.path(".", "paper", "output", "Fig_intensity_ratio.jpg"),
+ggsave(file.path(".", "paper", "output", "Figure_04_intensity_ratio.jpg"),
        dpi = 300, scale = 1.5,
        width = 4, height = 3, units = "in")
