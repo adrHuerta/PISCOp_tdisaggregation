@@ -96,6 +96,6 @@ to_plot %>%
         plot.margin=unit(c(0,0,0,0), "null")) + 
   facet_grid(data~season, switch = "y")
 
-ggsave(file.path(".", "paper", "output", "Figure_06_MAD.jpg"),
+ggsave(file.path(".", "paper", "output", "Figure_06_MAD.pdf"),
        dpi = 300, scale = 1.5,
        width = 4, height = 3, units = "in")

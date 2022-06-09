@@ -48,7 +48,7 @@ p3 <- ggplot() +
               aes(x = x, y = y, fill = layer), alpha = .8) + 
   scale_fill_gradientn(colors = colorRampPalette(ochRe::ochre_palettes$olsen_seq)(10)[4:10],
                        na.value= "lightblue",
-                       "Mean precipitacion (mm/day)",
+                       "Mean precipitation (mm/day)",
                        guide = guide_colorbar(frame.colour = "black",
                                               ticks.colour = "black",
                                               title.position = "left",
@@ -68,12 +68,12 @@ p3 <- ggplot() +
   #              fill = "lightblue", colour = "lightblue", size = 0.3) +
   geom_point(data = as.data.frame(aws$xyz),
              aes(x = LON, y = LAT), colour = "black", shape = 1, size = 2, stroke = .7) + #f3
-  geom_point(data = as.data.frame(aws$xyz[aws$xyz@data$LEN_x > 0,]),
-             aes(x = LON, y = LAT), colour = "red", shape = 19, size = 3, stroke = .7) + #f3
-  geom_label_repel(data = as.data.frame(aws$xyz[aws$xyz@data$LEN_x > 0,]), 
-                   aes(x = LON, y = LAT, label = ESTACION),
-                   fill = "white", size = 1.95,
-                   box.padding = 1, alpha = .8) +
+  # geom_point(data = as.data.frame(aws$xyz[aws$xyz@data$LEN_x > 0,]),
+  #            aes(x = LON, y = LAT), colour = "red", shape = 19, size = 3, stroke = .7) + #f3
+  # geom_label_repel(data = as.data.frame(aws$xyz[aws$xyz@data$LEN_x > 0,]), 
+  #                  aes(x = LON, y = LAT, label = ESTACION),
+  #                  fill = "white", size = 1.95,
+  #                  box.padding = 1, alpha = .8) +
   # scale_size_manual("Filtro 3", values = c(3, 1.5)) +
   # scale_colour_manual("Filtro 2", values = c("blue", "red")) +
   # scale_shape_manual("Filtro 1:", values = c(22, 21)) + 
@@ -161,8 +161,14 @@ p4 <- ggplot() +
                    box.padding = 1, alpha = .8,
                    nudge_x = 1, nudge_y = 1)
 
-cowplot::plot_grid(p4, p3, ncol = 2)
+#cowplot::plot_grid(p4, p3, ncol = 2)
 
-ggsave(file.path(".", "paper", "output", "Figure_02_study_area_stations.jpg"),
+ggsave(file.path(".", "paper", "output", "Figure_02_study_area_stations_A.pdf"),
+       p4,
        dpi = 300, scale = 1.5,
-       width = 5.5, height = 4, units = "in")
+       width = 2.25, height = 4, units = "in")
+
+ggsave(file.path(".", "paper", "output", "Figure_02_study_area_stations_B.pdf"),
+       p3,
+       dpi = 300, scale = 1.5,
+       width = 2.25, height = 4, units = "in")

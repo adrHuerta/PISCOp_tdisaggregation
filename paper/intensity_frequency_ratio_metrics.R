@@ -97,7 +97,7 @@ ggplot() +
         plot.margin=unit(c(0,0,0,0), "null")) + 
   facet_grid(data~season, switch = "y")
 
-ggsave(file.path(".", "paper", "output", "Figure_05_frequency_ratio.jpg"),
+ggsave(file.path(".", "paper", "output", "Figure_05_frequency_ratio.pdf"),
        dpi = 300, scale = 1.5,
        width = 4, height = 3, units = "in")
 
@@ -167,6 +167,6 @@ to_plot %>%
         plot.margin=unit(c(0,0,0,0), "null")) + 
   facet_grid(data~season, switch = "y")
 
-ggsave(file.path(".", "paper", "output", "Figure_04_intensity_ratio.jpg"),
+ggsave(file.path(".", "paper", "output", "Figure_04_intensity_ratio.pdf"),
        dpi = 300, scale = 1.5,
        width = 4, height = 3, units = "in")

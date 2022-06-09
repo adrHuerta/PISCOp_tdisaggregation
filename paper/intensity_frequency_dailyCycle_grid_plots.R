@@ -349,6 +349,6 @@ to_plot_df$p <- to_plot_df$p
 
 cowplot::plot_grid(pp_01, pp_02, ncol = 1)
 
-ggsave(file.path(".", "paper", "output", "Figure_09_daily_cycle_mean.jpg"),
+ggsave(file.path(".", "paper", "output", "Figure_09_daily_cycle_mean.pdf"),
        dpi = 300, scale = 1.25,
        width = 5, height = 4, units = "in")
