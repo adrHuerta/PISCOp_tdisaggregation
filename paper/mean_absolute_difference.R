@@ -32,7 +32,7 @@ piscop_hourly_noBC_ts_vi <- dir("data/processed/gridded/PISCOp_h_non-DBC", full.
   xts::xts(., time(aws_ts_vi)) %>%
   setNames(colnames(aws_ts_vi))
 
-seasons <- list(c("12","01","02"), c("05", "06", "07"))
+seasons <- list(c("12","01","02"), c("06", "07", "08"))
 
 lapply(seasons, function(z){
   
